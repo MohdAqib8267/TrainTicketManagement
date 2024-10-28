@@ -47,7 +47,7 @@ public class ShowMainMenuView {
             		
             	case 9:
             		if(user.isAdmin()){
-//            			viewAllUsersWithHistory();
+            			tc.viewAllUsersWithHistory(user.isAdmin());
                 		break;
             		}
             		else{

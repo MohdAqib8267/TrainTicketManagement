@@ -329,4 +329,31 @@ public class TrainController {
 		}
 		dao.closeConnection();
 	}
+	public void viewAllUsersWithHistory(boolean admin) {
+		if(!admin) {
+			System.out.println("You can't access this service");
+			return;
+		}
+		dao.createConnection();
+		ResultSet rs = dao.findUsersWithHistory();
+		try {
+			while(rs.next()) {
+				System.out.println("\n<======================= User Details ==================================>");
+			    System.out.printf("| %-15s : %-50d |%n", "User Id", rs.getInt("userId"));
+			    System.out.printf("| %-15s : %-50s |%n", "User Name", rs.getString("name"));
+			    System.out.printf("| %-15s : %-50d |%n", "Train Id", rs.getInt("trainId"));
+			    System.out.printf("| %-15s : %-50s |%n", "Train Name", rs.getString("trainName"));
+			    System.out.printf("| %-15s : %-50s |%n", "Seat Number", rs.getInt("seatNumber"));
+			    System.out.printf("| %-15s : %-50s |%n", "Coach", rs.getString("coachName"));
+			    System.out.printf("| %-15s : %-50s |%n", "Source", rs.getString("source"));
+			    System.out.printf("| %-15s : %-50s |%n", "Destionation", rs.getString("destination"));
+			    System.out.printf("| %-15s : %-50s |%n", "Booking Date", rs.getString("bookingDate"));
+			    System.out.printf("| %-15s : %-50s |%n", "status", rs.getString("status"));
+			    System.out.println("<==========================================================================>");
+			}
+		} catch (Exception e) {
+			System.out.println("Error in Showing User Details :"+e);
+		}
+		dao.closeConnection();
+	}
 }

@@ -347,5 +347,22 @@ public class TrainDao {
 		
 		return rs;
 	}
+	public ResultSet findUsersWithHistory() {
+		ResultSet rs=null;
+		String query = "select u.name, u.id as userId, t.name as trainName, t.id as trainId, t.source,t.destination, b.coachName,b.seatNumber, b.bookingDate,b.status from user as u inner join booking as b on u.id = b.userId inner join train as t on b.train_id=t.id;";
+		try {
+			if (conn == null || conn.isClosed()) {
+			    System.out.println("Connection is not established.");
+			    return null;
+			}
+			PreparedStatement st = conn.prepareStatement(query);
+			rs = st.executeQuery();
+			return rs;
+			
+		} catch (SQLException e) {
+			System.out.println("Error in Sorting Trains: "+e);
+		}
+		return rs;
+	}
 	
 }
