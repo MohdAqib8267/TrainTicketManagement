@@ -220,4 +220,113 @@ public class TrainController {
 		dao.booking(userId,train_id,coachType,noOfTickets);
 		dao.closeConnection();
 	}
+	public void ViewBookings(int userId) {
+		if((userId==0)) {
+			System.out.println("Something went wrong, please try again later.");
+			return;
+		}
+		dao.createConnection();
+		String query = "select t.id, t.name, t.source, t.destination,t.arrivalTime, t.departureTime,b.coachName,b.bookingDate,b.status from train as t\r\n"
+				+ "inner join booking as b\r\n"
+				+ "on t.id = b.train_id\r\n"
+				+ "where b.userId="+userId+"\r\n"
+				+ "order by t.name;";
+		ResultSet rs = dao.viewTickets(userId,query);
+		try {
+			while(rs.next()) {
+				System.out.println("\n<======================= Ticket DETAILS ==================================>");
+			    System.out.printf("| %-15s : %-50d |%n", "Train Number", rs.getInt("id"));
+			    System.out.printf("| %-15s : %-50s |%n", "Train Name", rs.getString("name"));
+			    System.out.printf("| %-15s : %-50s |%n", "Source", rs.getString("source"));
+			    System.out.printf("| %-15s : %-50s |%n", "Destination", rs.getString("destination"));
+			    System.out.printf("| %-15s : %-50s |%n", "Arrival Time", rs.getString("arrivalTime"));
+			    System.out.printf("| %-15s : %-50s |%n", "Departure Time", rs.getString("departureTime"));
+			    System.out.printf("| %-15s : %-50s |%n", "Booking Date-Time", rs.getString("bookingDate"));
+			    System.out.printf("| %-15s : %-50s |%n", "Status", rs.getString("status"));
+			    System.out.println("<==========================================================================>");
+			}
+		} catch (SQLException e) {
+			System.out.println("Error in showing tickets: "+e);
+		}
+		
+		dao.closeConnection();
+		
+	}
+	public void cancelBooking(int userId) {
+		if((userId==0)) {
+			System.out.println("Something went wrong, please try again later.");
+			return;
+		}
+		dao.createConnection();
+		String query = "select t.id, t.name, t.source, t.destination,t.arrivalTime, t.departureTime,b.coachName,b.bookingDate,b.status,b.id as booking_id from train as t\r\n"
+				+ "inner join booking as b\r\n"
+				+ "on t.id = b.train_id\r\n"
+				+ "where b.userId="+userId+" and b.status=\"ACTIVE\"\r\n"
+				+ "order by t.name;";
+		ResultSet rs = dao.viewTickets(userId,query);
+		try {
+			while(rs.next()) {
+				System.out.println("\n<======================= Ticket DETAILS ==================================>");
+				System.out.printf("| %-15s : %-50d |%n", "Ticket ID: ", rs.getInt("booking_id"));
+			    System.out.printf("| %-15s : %-50d |%n", "Train Number", rs.getInt("id"));
+			    System.out.printf("| %-15s : %-50s |%n", "Train Name", rs.getString("name"));
+			    System.out.printf("| %-15s : %-50s |%n", "Source", rs.getString("source"));
+			    System.out.printf("| %-15s : %-50s |%n", "Destination", rs.getString("destination"));
+			    System.out.printf("| %-15s : %-50s |%n", "Arrival Time", rs.getString("arrivalTime"));
+			    System.out.printf("| %-15s : %-50s |%n", "Departure Time", rs.getString("departureTime"));
+			    System.out.printf("| %-15s : %-50s |%n", "Booking Date-Time", rs.getString("bookingDate"));
+			    System.out.printf("| %-15s : %-50s |%n", "Status", rs.getString("status"));
+			    System.out.println("<==========================================================================>");
+			}
+		} catch (SQLException e) {
+			System.out.println("Error in showing tickets: "+e);
+		}
+		System.out.println("Enter Ticket ID: ");
+		int ticket_id = sc.nextInt(); sc.nextLine();
+		Boolean result = dao.cancelTicket(userId,ticket_id);
+		if(result) {
+			System.out.println("Booking cancelled successfully for Ticket ID: "+ticket_id);
+			return;
+		}
+		else {
+			System.out.println("something went wrong");
+		}
+		dao.closeConnection();
+		
+	}
+	public void SortTrains(int userId) {
+		System.out.println("Enter Source: ");
+		String src = sc.nextLine();
+		System.out.println("Enter Destination: ");
+		String dest = sc.nextLine();
+		dao.createConnection();
+		System.out.println("1. Sort based on Departure time.");
+		
+		int option = sc.nextInt(); sc.nextLine();
+		String preference=null;
+		
+		switch(option) {
+		case 1:
+			preference="departureTime";
+			break;
+		default:
+			System.out.println("Invalid option.");
+		}
+		ResultSet rs = dao.sortBasedOnPreference(src,dest,preference);
+		try {
+			while(rs.next()) {
+				System.out.println("\n<======================= TRAIN DETAILS ==================================>");
+			    System.out.printf("| %-15s : %-50d |%n", "Train Number", rs.getInt("id"));
+			    System.out.printf("| %-15s : %-50s |%n", "Train Name", rs.getString("name"));
+			    System.out.printf("| %-15s : %-50s |%n", "Source", rs.getString("source"));
+			    System.out.printf("| %-15s : %-50s |%n", "Destination", rs.getString("destination"));
+			    System.out.printf("| %-15s : %-50s |%n", "Arrival Time", rs.getString("arrivalTime"));
+			    System.out.printf("| %-15s : %-50s |%n", "Departure Time", rs.getString("departureTime"));
+			    System.out.println("<==========================================================================>");
+			}
+		} catch (Exception e) {
+			System.out.println("Error in Showing Sorted Trains :"+e);
+		}
+		dao.closeConnection();
+	}
 }

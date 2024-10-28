@@ -36,16 +36,13 @@ public class ShowMainMenuView {
             		tc.bookTickets(user.getId());
             		break;
             	case 3:
-//            		ViewBookings();
+            		tc.ViewBookings(user.getId());
             		break;
             	case 4:
-//            		SortTrains();
-            		break;	
-            	case 7:
-//            		viewBookingDetails();
-            		break;	
+            		tc.SortTrains(user.getId());
+            		break;		
             	case 8:
-//            		cancelBooking();
+            		tc.cancelBooking(user.getId());
             		break;
             		
             	case 9:

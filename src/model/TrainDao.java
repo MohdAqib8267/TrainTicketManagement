@@ -218,10 +218,7 @@ public class TrainDao {
 	}
 	
 	public void booking(int userId,int train_id,String coachType,int noOfTickets) {
-		System.out.println(userId);
-		System.out.println(train_id);
-		System.out.println(coachType);
-		System.out.println(noOfTickets);
+	
 		
 		String queryForFindCoachTypeStatus = """
 				select * from coach
@@ -281,6 +278,74 @@ public class TrainDao {
 			System.out.println("Error in booking seats: "+e);
 		}
 		
+	}
+	public ResultSet viewTickets(int userId,String query) {
+		ResultSet rs=null;
+		
+		try {
+			if (conn == null || conn.isClosed()) {
+			    System.out.println("Connection is not established.");
+			    return rs;
+			}
+			PreparedStatement st = conn.prepareStatement(query);
+			
+			rs = st.executeQuery();
+			return rs;
+		} catch (SQLException e) {
+			System.out.println("Error in fetching bookings: "+e);
+		}
+		return rs;
+	}
+	public Boolean cancelTicket(int userId, int ticket_id) {
+		
+		String query = "update booking set status='CANCELLED' where userId=? and id=?;";
+		try {
+			if (conn == null || conn.isClosed()) {
+			    System.out.println("Connection is not established.");
+			    return false;
+			}
+			PreparedStatement st = conn.prepareStatement(query);
+			st.setInt(1, userId);
+			st.setInt(2, ticket_id);
+			if(st.executeUpdate()>0) {
+				return true;
+			}
+			
+		} catch (SQLException e) {
+			System.out.println("Error in Cancel bookings: "+e);
+		}
+		
+		return false;
+	}
+	public ResultSet sortBasedOnPreference(String src, String dest, String preference) {
+		ResultSet rs=null;
+		if(src==null || dest==null || preference==null) {
+			System.out.println("something is missing.");
+		}
+		String query = null;
+		if(preference.equals("departureTime")) {
+			query = "select * from train where source=? and destination=? order by departureTime";
+		}
+		else {
+			System.out.println("Invalid preference");
+		}
+		
+		try {
+			if (conn == null || conn.isClosed()) {
+			    System.out.println("Connection is not established.");
+			    return null;
+			}
+			PreparedStatement st = conn.prepareStatement(query);
+			st.setString(1, src);
+			st.setString(2, dest);
+			rs = st.executeQuery();
+			return rs;
+			
+		} catch (SQLException e) {
+			System.out.println("Error in Sorting Trains: "+e);
+		}
+		
+		return rs;
 	}
 	
 }
